@@ -65,10 +65,11 @@ data:
               names:
                 - 'dev'
         scheme: http
-        metrics_path: /metrics  # Adjust path if different
-        static_configs:
-          - targets:
-              - 'myhelmapp'
+        metrics_path: /metrics
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: myhelmapp
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
