@@ -65,8 +65,10 @@ data:
               names:
                 - 'dev'
         scheme: http
+        metrics_path: /metrics  # Adjust path if different
         static_configs:
           - targets:
-              - '10.110.34.201:80'  # Replace with your NodePort service IP and port
+              - 'myhelmapp.dev.svc.cluster.local:80'
+
 
 
