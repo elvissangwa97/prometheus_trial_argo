@@ -67,6 +67,6 @@ data:
         scheme: http
         static_configs:
           - targets:
-              - '10.110.34.201:31156'  # Replace with your NodePort service IP and port
+              - '10.110.34.201:80'  # Replace with your NodePort service IP and port
 
 
