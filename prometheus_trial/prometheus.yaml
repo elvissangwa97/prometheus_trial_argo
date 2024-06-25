@@ -64,7 +64,7 @@ data:
             namespaces:
               names:
                 - 'dev'
-        scheme: http
+        scheme: tcp
         metrics_path: /metrics  # Adjust path if different
         static_configs:
           - targets:
