@@ -68,7 +68,7 @@ data:
         metrics_path: /metrics  # Adjust path if different
         static_configs:
           - targets:
-              - 'myhelmapp.dev.svc.cluster.local:80'
+              - 'myhelmapp'
 
 
 
