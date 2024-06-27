@@ -4,6 +4,43 @@ metadata:
   name: monitoring
 
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-sa
+  namespace: monitoring
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data/prometheus
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-pvc
+  namespace: monitoring
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +56,7 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: prometheus-sa
       containers:
         - name: prometheus
           image: prom/prometheus:v2.26.0
@@ -27,10 +65,15 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/
+            - name: prometheus-storage
+              mountPath: /prometheus
       volumes:
         - name: config-volume
           configMap:
             name: prometheus-config
+        - name: prometheus-storage
+          persistentVolumeClaim:
+            claimName: prometheus-pvc
 
 ---
 apiVersion: v1
@@ -63,7 +106,7 @@ data:
           - role: endpoints
             namespaces:
               names:
-                - 'dev'
+                - 'moac'
         scheme: http
         metrics_path: /metrics
         relabel_configs:
@@ -88,7 +131,7 @@ metadata:
   name: prometheus-cluster-role-binding
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: prometheus-sa
   namespace: monitoring
 roleRef:
   kind: ClusterRole
